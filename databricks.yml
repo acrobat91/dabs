@@ -5,6 +5,9 @@
 bundle:
   name: test_ci_cd_local
 
+include:
+  - resources/*.yml
+
 targets:
   dev:
     mode: development

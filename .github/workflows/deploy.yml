@@ -1,0 +1,30 @@
+name: Deploy to Databricks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Databricks CLI + Bundles
+        run: |
+          pip install databricks-cli
+          pip install databricks-bundle
+
+      - name: Configure Databricks auth
+        run: |
+          echo "DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}" >> $GITHUB_ENV
+          echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Deploy bundle
+        run: databricks bundle deploy
+
+      - name: Run job
+        run: databricks bundle run hello_job
