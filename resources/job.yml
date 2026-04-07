@@ -1,0 +1,11 @@
+resources:
+  jobs:
+    hello-job:
+      name: hello-job
+
+      tasks:
+        - task_key: hello-task
+          spark_python_task:
+            python_file: ../src/notebook.py
+
+      existing_cluster_id: 0407-171831-awyl862b
