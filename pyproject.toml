@@ -1,0 +1,15 @@
+[project]
+name = "test_ci_cd_local"
+version = "0.1.0"
+authors = [{ name = "armando.gonzalez.contractor@pepsico.com" }]
+requires-python = ">=3.10,<=3.13"
+dependencies = []
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+strict = true
+
+
+[tool.ruff]
+line-length = 100

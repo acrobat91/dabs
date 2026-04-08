@@ -2,29 +2,72 @@ name: Deploy to Databricks
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main", "develop"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+        #1. Checkout repo
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+        # 2. Setup Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+        # 3. Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install unittest nutter pytest mypy ruff databricks-cli
+
+        # 4. Linting
+      - name: Lint (ruff)
+        run: |
+          ruff check src/
+
+        # 5. Type checking
+      - name: Type checking (mypy)
+        run: |
+          mypy src/
+
+       # 6. Unit Tests
+      - name: Unit tests
+        run: |
+          python -m nutter tests/
+
+      # 7. Integration Tests
+      - name: Integration tests
+        run: |
+          python -m unittest discover -s tests/integration
+
+      #8. Install Databricks CLI
       - name: Install Databricks CLI + Bundles
         run: |
           pip install databricks-cli
           pip install databricks-bundle
 
+      #9. Configure Databricks Auth
       - name: Configure Databricks auth
         run: |
           echo "DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}" >> $GITHUB_ENV
           echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Deploy bundle
-        run: databricks bundle deploy
+      # 10. Validate bundle
+      - name: Validate DAB
+        run: |
+          databricks bundle validate
 
+      # 11. Deploy (solo en main)
+      - name: Deploy DAB
+        if: github.ref == 'refs/heads/main'
+        run: |
+          databricks bundle deploy
+
+      #12. Run job (optional)
       - name: Run job
         run: databricks bundle run hello_job

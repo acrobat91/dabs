@@ -16,7 +16,6 @@ targets:
       host: https://adb-4235127113959330.10.azuredatabricks.net
 
   ## Optionally, there could be 'staging' or 'prod' targets here.
-  #
-  # prod:
-  #   workspace:
-  #     host: https://adb-4235127113959330.10.azuredatabricks.net
+  prod:
+    workspace:
+      host: https://adb-4235127113959330.10.azuredatabricks.net
